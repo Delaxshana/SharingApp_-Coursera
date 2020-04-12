@@ -1,0 +1,117 @@
+package com.example.sharingapp;
+
+import android.content.Context;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
+class ContactList {
+
+    private static ArrayList<Contact> mContacts;
+    private String FILENAME = "contacts.sav";
+
+    ContactList() {
+        mContacts = new ArrayList<Contact>();
+    }
+
+
+    public void loadContacts(Context context) {
+
+        try {
+            FileInputStream fis = context.openFileInput(FILENAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<Contact>>() {}.getType();
+            mContacts = gson.fromJson(isr, listType); // temporary
+            fis.close();
+        } catch (FileNotFoundException e) {
+            mContacts = new ArrayList<Contact>();
+        } catch (IOException e) {
+            mContacts = new ArrayList<Contact>();
+        }
+    }
+
+    public void addContact(Contact contact) {
+        mContacts.add(contact);
+    }
+
+    public void saveContacts(Context context) {
+        try {
+            FileOutputStream fos = context.openFileOutput(FILENAME, 0);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            Gson gson = new Gson();
+            gson.toJson(mContacts, osw);
+            osw.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setContacts(ArrayList<Contact> contacts) {
+        mContacts = contacts;
+    }
+
+    public ArrayList<Contact> getContacts() {
+        return mContacts;
+    }
+
+    public ArrayList<String> getAllUsernames() {
+        ArrayList<String> usernamesList = new ArrayList<>();
+
+        for(Contact contact : mContacts) {
+            usernamesList.add(contact.getUsername());
+        }
+
+        return usernamesList;
+    }
+
+    public void deleteContact(Contact contact) {
+        mContacts.remove(contact);
+    }
+
+    public Contact getContact(int index) {
+        return mContacts.get(index);
+    }
+
+    public int getSize() {
+        return mContacts.size();
+    }
+
+    public int getIndex(Contact contact) {
+        return mContacts.indexOf(contact);
+    }
+
+    public boolean hasContact(Contact contact) {
+        return mContacts.indexOf(contact) >= 0;
+    }
+
+    public Contact getContactByUsername(String username) {
+        for(Contact contact:mContacts) {
+            if(contact.getUsername().equals(username))
+                return contact;
+        }
+        return null;
+    }
+
+    public boolean isUsernameAvailable(String username) {
+
+        for(Contact contact : mContacts) {
+            if(contact.getUsername().equals(username)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

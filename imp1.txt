@@ -1,0 +1,55 @@
+package com.example.sharingapp;
+
+import java.util.UUID;
+
+class Contact {
+
+    private String mUserName , mEmail , mId;
+
+    Contact(String username,String email,String id) {
+        mUserName = username;
+        mEmail = email;
+        if (id == null){
+            setId();
+        } else {
+            updateId(id);
+        }
+    }
+
+    public void setId() {
+        this.mId = UUID.randomUUID().toString();
+    }
+
+    public String getId() { return  mId; }
+
+    public void updateId(String id) { mId = id;}
+
+    public void setUsername(String username) { mUserName = username;}
+    public String getUsername() {return mUserName;}
+
+    public void setEmail(String email) { mEmail = email;}
+    public String getEmail() { return mEmail;}
+
+    @Override
+    public boolean equals(Object o) {
+
+        // If the object is compared with itself then return true
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of Complex or not
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof Contact)) {
+            return false;
+        }
+
+        // typecast o to Complex so that we can compare data members
+        Contact c = (Contact) o;
+
+        // Compare the data members and return accordingly
+        return c.getUsername().equals(mUserName) && c.getEmail().equals(mEmail);
+    }
+
+
+}
